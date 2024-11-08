@@ -52,7 +52,7 @@ a.mod          <- exp(log.a.mod)
 b.mod          <- coef(lm.mod)[2]                         
 
 # power function form 
-# o_density  = a * length^b
+# o_density  = a * o_diameter^b
 yy.o_dens <- a.mod * o_diams ^ b.mod  # median
 
 # plot the simulated data and the model fit
