@@ -33,8 +33,8 @@ rm(list=ls())
 
 # 1) Develop the AD calibration curve----
 
-# simulate some data
-# log(oocyte_density) = log(alpha) + beta * log(oocyte_diameter) + some noise
+# simulate some data for the example
+# log(oocyte_density) = log(a) + b*log(oocyte_diameter) + some noise
 o_diams       <- seq(400,1000, 5)                        # independent variable (mean oocyte diameter)
 log.a         <- 26.93                                   # intercept parameter of log-log linear model
 b             <- -2.78                                   # slope parameter of log-log linear model (also the exponent parameter of a power function)  
@@ -52,7 +52,7 @@ a.mod          <- exp(log.a.mod)
 b.mod          <- coef(lm.mod)[2]                         
 
 # power function form 
-# o_density  = alpha * length ^ beta
+# o_density  = a * length^b
 yy.o_dens <- a.mod * o_diams ^ b.mod  # median
 
 # plot the simulated data and the model fit
