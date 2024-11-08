@@ -3,7 +3,7 @@
 
 # An example of developing a size-fecundity relationship
 
-# Date required: 
+# Data required: 
 # 1) fish size (length or weight)
 # 2) fecundity (obtained by either the AD, gravimetric, or other fecundity method)
 
