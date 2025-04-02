@@ -50,6 +50,7 @@ rm(list=ls())
   # create a data frame 
   mydf <- data.frame(xx,fecundity)
 
+  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
 # Parameter estimation----
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,25 +66,27 @@ rm(list=ls())
   bc.alpha.mod    <- bc.results.mod[1]
   
   # parameter estimates for the power function
+  # power function form 
+  # fecundity = alpha * length ^ beta
   alpha.mod          # scaling coefficient median
   bc.alpha.mod       # scaling coefficient mean (bias corrected)
   beta.mod           # exponent
 
+  
 #~~~~~~~~~~~~~~~~~~~~~~~
 # Visualize results----
 #~~~~~~~~~~~~~~~~~~~~~~~
-  # power function form 
   # fecundity = alpha * length ^ beta
-  yy              <- alpha.mod    * xx ^ beta.mod
-  yy.bias.correct <- bc.alpha.mod * xx ^ beta.mod
+  yy.median  <- alpha.mod    * xx ^ beta.mod
+  yy.mean    <- bc.alpha.mod * xx ^ beta.mod
   
   # plot the simulated data and the model fit
   plot(fecundity~xx, data=mydf, main="Size-Fecundity Relationship", 
        pch=19, col="gray", 
        xlab="Length (cm)",
        ylab="Fecundity")   
-  lines(yy~xx)
-  lines(yy.bias.correct~xx, lty=2,col="red")
-  legend("topleft", bty='n', legend = c("median","mean"), lty=c(2,1), col=c("red", "black"))
-  text(350, 1.0e+06, labels=paste("y (mean) =",round(bc.alpha.mod,6),"x^",round(beta.mod,3), sep=" "), cex=0.8)
+  lines(yy.mean  ~ xx, lty=1,col="black")
+  lines(yy.median~ xx, lty=2,col="red")
+  legend("topleft", bty='n', legend = c("mean","median","simulated data"), lty=c(1,2,NA), pch=c(NA,NA,19), col=c("black", "red","gray"))
+  text(450, 2.0e+05, labels=paste("y (mean) =",round(bc.alpha.mod,6),"x^",round(beta.mod,3), sep=" "), cex=0.8)
 
