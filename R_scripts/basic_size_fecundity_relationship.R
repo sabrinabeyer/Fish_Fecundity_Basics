@@ -1,8 +1,8 @@
-# Example of a basic size-fecundity relationship
-# Description: Fit a power function to body size and fecundity data
+# Basic size-fecundity relationship
+# Description: Fit a power function to fish size and fecundity data
 # Contact: sabrina.beyer@noaa.gov, NOAA Northwest Fisheries Science Center
 
-# Data required: 
+# Data: 
 # 1) fish size (length or weight)
 # 2) fecundity (obtained by either the autodiametric (AD), gravimetric, 
 #    or other fecundity method)
@@ -11,15 +11,16 @@
 # clear work space
 rm(list=ls())
 
-# ~~~~~~~~~~~~~
-# Functions----
-# ~~~~~~~~~~~~~
-  # Bias correction function to return the mean instead of median from log-space
-  # parameter estimation of a power function (only needed for alpha)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Function to use below----
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Bias correction function that will return the mean instead of median from 
+  # log-space parameter estimation of a power function (only needed for alpha)
   # Background:
       # log-normal distribution: lognormal(u,sd^2)
       # median: exp(u)
-      # mean:   exp(u + sd^2/2), same as: exp(u)*exp(0.5*sd^2)
+      # mean:   exp(u + sd^2/2), same as exp(u)*exp(0.5*sd^2)
   bias_correct <- function(model){
     alpha_med  <- exp(model$coefficients[1])
     beta       <- model$coefficients[2]
@@ -29,18 +30,16 @@ rm(list=ls())
   }
 
   
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Basic size-fecundity relationship----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- # Example:length-fecundity relationship
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Example: Fit a length-fecundity relationship----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~
 # Simulate data----
 # ~~~~~~~~~~~~~~~~~~~
-  # simulate some data for the example
+  # simulate data for the example
   # log(fecundity) = log(alpha) + beta * log(length) + some noise
-  xx            <- seq(300, 500, 1)                         # independent variable (using fish length here (mm) for the example, but this could be weight instead)
+  xx            <- seq(300, 500, 1)                         # independent variable (using fish length (mm) for the example, but this could be weight instead)
   log.alpha     <- -11.938                                  # intercept parameter of log-log linear model
   beta          <- 4.043                                    # slope parameter of log-log linear model (this is also the exponent parameter of the power function)  
   error         <- rlnorm(length(xx), meanlog=0, sdlog=0.1) # simulate some error
@@ -60,7 +59,7 @@ rm(list=ls())
   alpha.mod      <- exp(log.alpha.mod)  # note, this is the median
   beta.mod       <- coef(lm.mod)[2]    
   
-  # bias correct (bc) alpha to return the mean instead of median
+  # bias correct (bc) alpha to return the mean instead of the median
   # beta remains the same
   bc.results.mod  <- bias_correct(lm.mod)
   bc.alpha.mod    <- bc.results.mod[1]
