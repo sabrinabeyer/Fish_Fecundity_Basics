@@ -1,22 +1,35 @@
-# Basic size-fecundity relationship
+# Basic size-fecundity relationship for fish
 # Description: Fit a power function to fish size and fecundity data
 # Contact: sabrina.beyer@noaa.gov, NOAA Northwest Fisheries Science Center
 
-# Data: 
+# The data: 
 # 1) fish size (length or weight)
-# 2) fecundity (obtained by either the autodiametric (AD), gravimetric, 
-#    or other fecundity method)
+# 2) fecundity (obtained by autodiametric, gravimetric, or other fecundity method)
+
+# Fitting a functional relationship:
+# Fecundity often increases as a power function of body size (length or weight)
+#    1) fecundity = alpha * length or weight ^ beta
+
+# Estimate the parameters of the size-fecundity relationship by linear 
+# regression in log-space:
+#    2) log(fecundity) = log(alpha) + beta * log(length or weight)
+
+# Back-transform (and bias-correct) parameters to normal-space:
+#    3) fecundity = alpha * length or weight ^ beta
 
 
 # clear work space
 rm(list=ls())
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Example: Fit a length-fecundity relationship----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Function to use below----
+# Bias correction function----
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Bias correction function that will return the mean instead of median from 
-  # log-space parameter estimation of a power function (only needed for alpha)
+  # The bias correction function returns the mean (instead of median) of the
+  # scaling parameter (alpha) from the linear log-space regression parameter estimation
   # Background:
       # log-normal distribution: lognormal(u,sd^2)
       # median: exp(u)
@@ -29,20 +42,16 @@ rm(list=ls())
     return(as.numeric(c(alpha_mean, beta)))
   }
 
-  
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Example: Fit a length-fecundity relationship----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~
-# Simulate data----
+# 1. Simulate data----
 # ~~~~~~~~~~~~~~~~~~~
   # simulate data for the example
   # log(fecundity) = log(alpha) + beta * log(length) + some noise
   xx            <- seq(300, 500, 1)                         # independent variable (using fish length (mm) for the example, but this could be weight instead)
   log.alpha     <- -11.938                                  # intercept parameter of log-log linear model
-  beta          <- 4.043                                    # slope parameter of log-log linear model (this is also the exponent parameter of the power function)  
-  error         <- rlnorm(length(xx), meanlog=0, sdlog=0.1) # simulate some error
+  beta          <- 4.043                                    # slope parameter of log-log linear model (this is the same as the exponent parameter of the power function)  
+  error         <- rlnorm(length(xx), meanlog=0, sdlog=0.15) # simulate some error
   log.fecundity <- log.alpha + beta*log(xx) + error  
   fecundity     <- exp(log.fecundity)                       # simulated fecundity data
   
@@ -51,7 +60,7 @@ rm(list=ls())
 
   
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Parameter estimation----
+# 2.Parameter estimation----
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
   # fit a simple linear model to the natural log transformed simulated data
   lm.mod         <- lm(log(fecundity)~log(xx), data=mydf)
@@ -67,13 +76,13 @@ rm(list=ls())
   # parameter estimates for the power function
   # power function form 
   # fecundity = alpha * length ^ beta
-  alpha.mod          # scaling coefficient median
-  bc.alpha.mod       # scaling coefficient mean (bias corrected)
+  alpha.mod          # scaling coefficient, median
+  bc.alpha.mod       # scaling coefficient, mean (bias corrected)
   beta.mod           # exponent
 
   
 #~~~~~~~~~~~~~~~~~~~~~~~
-# Visualize results----
+# 3. Visualize results----
 #~~~~~~~~~~~~~~~~~~~~~~~
   # fecundity = alpha * length ^ beta
   yy.median  <- alpha.mod    * xx ^ beta.mod
@@ -87,5 +96,5 @@ rm(list=ls())
   lines(yy.mean  ~ xx, lty=1,col="black")
   lines(yy.median~ xx, lty=2,col="red")
   legend("topleft", bty='n', legend = c("mean","median","simulated data"), lty=c(1,2,NA), pch=c(NA,NA,19), col=c("black", "red","gray"))
-  text(450, 2.0e+05, labels=paste("y (mean) =",round(bc.alpha.mod,6),"x^",round(beta.mod,3), sep=" "), cex=0.8)
+  text(450, 2.0e+05, labels=paste("y (mean) =",round(bc.alpha.mod,6),"x ^",round(beta.mod,3), sep=" "), cex=0.8)
 
