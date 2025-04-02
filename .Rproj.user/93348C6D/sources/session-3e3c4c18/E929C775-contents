@@ -68,7 +68,7 @@ rm(list=ls())
   alpha.mod      <- exp(log.alpha.mod)  # note, this is the median
   beta.mod       <- coef(lm.mod)[2]    
   
-  # bias correct (bc) alpha to return the mean instead of the median
+  # bias correct (bc) alpha to return the mean, instead of the median
   # beta remains the same
   bc.results.mod  <- bias_correct(lm.mod)
   bc.alpha.mod    <- bc.results.mod[1]
